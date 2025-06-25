@@ -1,2 +1,7 @@
 # Google App Engine generated folder
 appengine-generated/
+
+# Node.js dependencies
+node_modules/
+backend/node_modules/
+frontend/node_modules/
