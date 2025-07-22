@@ -45,6 +45,3 @@ const MainNavigation = props => {
 };
 
 export default MainNavigation;
-
-
-

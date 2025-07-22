@@ -1,15 +1,29 @@
-version: "3.8"
+# version: "3"
+# services:
+#   frontend:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile.dev
+#     ports:
+#       - "3000:3000"
+#     volumes:
+#       - .:/app
+#       - /app/node_modules
+#     container_name: fullstack-pro03-container
+#     stdin_open: true
+#     tty: true
 
+version: "3"
 services:
-  react-app:
-    container_name: react-dev03
+  react-dev:
     build:
       context: .
       dockerfile: Dockerfile.dev
     ports:
       - "3000:3000"
     volumes:
-      - .:/app
-      - /app/node_modules
-    stdin_open: true
-    tty: true
+      - .:/app            # 宿主机代码映射进容器，实现热更新
+      - /app/node_modules # 防止覆盖容器内的依赖
+    environment:
+      - CHOKIDAR_USEPOLLING=true # 启用轮询监听，解决代码变动不触发问题
+
