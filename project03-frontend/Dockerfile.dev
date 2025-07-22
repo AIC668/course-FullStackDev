@@ -19,6 +19,21 @@
 # # 启动 React 开发服务器
 # CMD ["npm", "start"]
 
+# FROM node:13
+
+# WORKDIR /app
+
+# COPY package*.json ./
+# RUN npm install
+
+# # 热更新需要绑定监听地址
+# ENV HOST 0.0.0.0
+
+# EXPOSE 3000
+
+# CMD ["npm", "start"]
+
+# 开发镜像（支持热更新）
 FROM node:13
 
 WORKDIR /app
@@ -26,9 +41,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# 热更新需要绑定监听地址
-ENV HOST 0.0.0.0
-
+# EXPOSE 对 React 开发服务器没影响，但建议保留
 EXPOSE 3000
 
 CMD ["npm", "start"]
