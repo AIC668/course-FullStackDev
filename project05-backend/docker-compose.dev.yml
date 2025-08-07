@@ -1,0 +1,16 @@
+# docker-compose.dev.yml
+
+version: '3'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5000:5000"  # 你可以改为你希望的端口
+    volumes:
+      - .:/app        # 挂载当前目录
+      - /app/node_modules  # 避免 node_modules 冲突
+    environment:
+      - NODE_ENV=development
