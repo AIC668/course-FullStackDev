@@ -1,6 +1,4 @@
-# docker-compose.dev.yml
-
-version: '3'
+version: "3.8"
 
 services:
   backend:
@@ -8,9 +6,13 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     ports:
-      - "5000:5000"  # 你可以改为你希望的端口
-    volumes:
-      - .:/app        # 挂载当前目录
-      - /app/node_modules  # 避免 node_modules 冲突
+      - "5000:5000"          # 宿主机 5000 -> 容器 5000
     environment:
       - NODE_ENV=development
+      - PORT=5000            # 传给应用，配合 app.listen(PORT)
+    volumes:
+      - .:/app               # 挂载源码，nodemon 热重载
+      - /app/node_modules    # 匿名卷，避免宿主覆盖容器的 node_modules
+    command: ["npm", "run", "dev"]   # 用项目里的 nodemon 脚本启动（更可控）
+    # 可选：异常时自动重启
+    # restart: unless-stopped

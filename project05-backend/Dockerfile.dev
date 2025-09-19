@@ -1,22 +1,20 @@
 # Dockerfile.dev
+# 用 LTS 版本，兼容性与安全性更好
+FROM node:20
 
-# 使用官方 Node 镜像
-FROM node:13
-
-# 设置工作目录
 WORKDIR /app
 
-# 将 package*.json 拷贝进容器（如果有）
+# 先只拷贝依赖清单，利用缓存层
 COPY package*.json ./
 
-# 安装依赖（如果没有 package.json 会报错，可以后续再补）
+# 安装依赖（含 devDependencies）
 RUN npm install
 
-# 安装开发依赖 nodemon
-RUN npm install -g nodemon
-
-# 拷贝当前目录的所有内容到容器中
+# 再拷贝项目源码（被 compose 的挂载覆盖也没关系）
 COPY . .
 
-# 默认运行 nodemon 启动 app.js
-CMD ["nodemon", "app.js"]
+# 文档化暴露端口
+EXPOSE 5000
+
+# 默认入口也可以写在这里，但我们让 compose 覆盖：
+# CMD ["npm", "run", "dev"]
