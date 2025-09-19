@@ -1,20 +1,22 @@
-# Dockerfile.dev
-# 用 LTS 版本，兼容性与安全性更好
+# 用 LTS
 FROM node:20
+
+# 更快的 npm（可选）
+RUN corepack enable
 
 WORKDIR /app
 
-# 先只拷贝依赖清单，利用缓存层
+# 先拷贝依赖清单，利用缓存
 COPY package*.json ./
 
-# 安装依赖（含 devDependencies）
-RUN npm install
+# 安装依赖（在 dev 环境下会包含 devDependencies）
+# 如果你的 package.json 里没有 nodemon，也没关系：我们全局再装一份兜底
+RUN npm install && npm install -g nodemon
 
-# 再拷贝项目源码（被 compose 的挂载覆盖也没关系）
+# 再拷贝源码
 COPY . .
 
-# 文档化暴露端口
+# 暴露端口（文档化）
 EXPOSE 5000
 
-# 默认入口也可以写在这里，但我们让 compose 覆盖：
-# CMD ["npm", "run", "dev"]
+# 交由 compose 的 command 覆盖启动方式

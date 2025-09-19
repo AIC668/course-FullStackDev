@@ -6,13 +6,20 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     ports:
-      - "5000:5000"          # 宿主机 5000 -> 容器 5000
+      - "5000:5000"               # 宿主 5000 → 容器 5000
     environment:
       - NODE_ENV=development
-      - PORT=5000            # 传给应用，配合 app.listen(PORT)
+      - PORT=5000                 # 若 app.js 用 process.env.PORT
+      - CHOKIDAR_USEPOLLING=true  # 在容器/WSL/挂载盘下更稳定的文件监控
     volumes:
-      - .:/app               # 挂载源码，nodemon 热重载
-      - /app/node_modules    # 匿名卷，避免宿主覆盖容器的 node_modules
-    command: ["npm", "run", "dev"]   # 用项目里的 nodemon 脚本启动（更可控）
-    # 可选：异常时自动重启
+      - .:/app                    # 挂载源码热重载
+      - /app/node_modules         # 匿名卷，避免宿主覆盖容器的 node_modules
+    command: ["npm", "start"]     # 不依赖不存在的 dev 脚本
+    # 若你希望容器异常自动拉起：
     # restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000', res=>process.exit(res.statusCode===404||res.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
